@@ -1,5 +1,5 @@
 # Telegram-AI-Inventory-Agent
-📦 ## Telegram AI Inventory Agent
+📦Telegram AI Inventory Agent
 A conversational inventory manager: message it in plain English on Telegram, and it reads, updates, and reports on your Google Sheets inventory in seconds. No spreadsheet to open, no form to fill.
 ## Why
 Inventory tracking usually means opening a spreadsheet, finding the right row, and manually editing it, even for a quick check like "how many eggs do we have left?" This agent removes that friction entirely: you just ask, the same way you'd message a coworker.

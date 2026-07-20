@@ -9,18 +9,18 @@ Inventory tracking usually means opening a spreadsheet, finding the right row, a
 
 
 ## How it works
-Trigger: Incoming Telegram message from the user
-Receive query — captures the user's message on Telegram
-Wait — brief pause before processing
-Inventory AI Agent (Gemini Flash) — interprets the intent of the message (add stock, check stock, update stock, etc.)
-Memory layer — retains conversation context, so follow-up messages don't need to repeat earlier details
-Tools available to the agent:
-Lookup tool — reads current inventory from Google Sheets
-Append/update tool — writes new or updated inventory rows, including auto-generated descriptions
-Response branch:
-Success → replies to the user directly on Telegram with the requested info or confirmation
-Error → routes to error handling instead of failing silently
-Error handling:
+**Trigger**: Incoming Telegram message from the user
+**Receive query** — captures the user's message on Telegram
+**Wait** — brief pause before processing
+**Inventory AI Agent (Gemini Flash)** — interprets the intent of the message (add stock, check stock, update stock, etc.)
+**Memory layer** — retains conversation context, so follow-up messages don't need to repeat earlier details
+**Tools available to the agent:**
+**Lookup tool** — reads current inventory from Google Sheets
+**Append/update tool** — writes new or updated inventory rows, including auto-generated descriptions
+**Response branch:**
+**Success** → replies to the user directly on Telegram with the requested info or confirmation
+**Error** → routes to error handling instead of failing silently
+**Error handling:**
 Emails an alert to the admin/engineer via Gmail
 Checks whether the error is a rate limit ("too many requests") vs. another failure type, and notifies accordingly via separate Telegram alerts
 ## Example interaction
@@ -28,12 +28,12 @@ Checks whether the error is a rate limit ("too many requests") vs. another failu
 <img width="973" height="652" alt="Telegram ai inventory sheet" src="https://github.com/user-attachments/assets/d797f55e-77f3-4de7-ae89-78f587ab4fe0" />
 
 ## Stack
-n8n — orchestration
-Google Gemini (Flash) — natural language understanding / agent brain
-Google Sheets — inventory database
-Telegram — user interface
-Gmail — admin error alerts
-Simple Memory — conversation context retention
+**n8n** — orchestration
+**Google Gemini (Flash)** — natural language understanding / agent brain
+**Google Sheets** — inventory database
+**Telegram** — user interface
+**Gmail** — admin error alerts
+**Simple Memory** — conversation context retention
 ## Setup
 Import `workflow.json` into n8n
 Connect the following credentials:

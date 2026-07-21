@@ -1,0 +1,494 @@
+{
+  "name": "Inventory assistant copy",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        272
+      ],
+      "id": "70be6819-30cb-48a7-a41a-4615469e0ecf",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        176
+      ],
+      "id": "ea3d44ac-4d48-4a92-a7b9-df87a676dc1f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "6yG5ELDegbYFiXU1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this to add a NEW item OR update the quantity of an EXISTING item in the inventory sheet.\n\nFor a NEW item: confirm with the user that you have item name, category, quantity, unit, reorder threshold, and price before calling this.\n\nFor an EXISTING item (user wants to add/remove stock): first use the Lookup tool to check if the item already exists and get its current quantity. If it exists, calculate the new total quantity (current quantity + or - the amount mentioned) and pass that final number here, along with the item's existing category, unit, reorder threshold, and price (do not change these unless the user explicitly asks to).\n\nAlways match on the Item field exactly as it appears in the sheet.",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1uTwPD-iU5dRyaNNca4aEfiIZbDsnzWW8K0KHHdr33dA",
+          "mode": "list",
+          "cachedResultName": "Supermarket Inventory Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uTwPD-iU5dRyaNNca4aEfiIZbDsnzWW8K0KHHdr33dA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uTwPD-iU5dRyaNNca4aEfiIZbDsnzWW8K0KHHdr33dA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Item": "={{ $fromAI('item_name', 'the item name, e.g. Beans 5kg') }}",
+            "Category": "={{ $fromAI('category', 'the inventory category, e.g. Grains') }}",
+            "Quantity": "={{ $fromAI('quantity', 'the quantity as a number') }}",
+            "Unit": "={{ $fromAI('unit', 'unit of measurement, e.g. bags, units, crates') }}",
+            "Reorder Threshold": "={{ $fromAI('reorder_threshold', 'the reorder threshold as a number') }}",
+            "Price": "={{ $fromAI('price', 'price as a number') }}"
+          },
+          "matchingColumns": [
+            "Item"
+          ],
+          "schema": [
+            {
+              "id": "Item",
+              "displayName": "Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Unit",
+              "displayName": "Unit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reorder Threshold",
+              "displayName": "Reorder Threshold",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        224
+      ],
+      "id": "2d183809-14a7-49bb-ab7e-388df886644a",
+      "name": "Append or update row in sheet in Google Sheets",
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U8VdbLzCkANG5dWp",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "the description section tells the LLM when to use this tool"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this to look up supermarket inventory by item name or category. Returns quantity, unit, reorder threshold, and price.",
+        "documentId": {
+          "__rl": true,
+          "value": "1uTwPD-iU5dRyaNNca4aEfiIZbDsnzWW8K0KHHdr33dA",
+          "mode": "list",
+          "cachedResultName": "Supermarket Inventory Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uTwPD-iU5dRyaNNca4aEfiIZbDsnzWW8K0KHHdr33dA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uTwPD-iU5dRyaNNca4aEfiIZbDsnzWW8K0KHHdr33dA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        208
+      ],
+      "id": "bcb0bc46-a2f2-4428-8612-6b90ec11a1aa",
+      "name": "Lookup tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U8VdbLzCkANG5dWp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "522a54c7-6e5b-484b-99ce-8c79e29322b2",
+      "name": "Wait",
+      "webhookId": "a80f240d-3821-40e9-b376-0b8e7fd5ec9f"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ea8a8039-cbf5-4925-9c6f-66f95b0bf90a",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "too many requests",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        512,
+        144
+      ],
+      "id": "be9e4e38-480b-40b3-aca7-571b2fb50f16",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "7639067062",
+        "text": "I'm getting a lot of requests right now, please try again in a moment.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        112
+      ],
+      "id": "8741efd6-38e3-4e12-9206-43c9de3ad3b0",
+      "name": "too many requests",
+      "webhookId": "ccbb38dd-8915-438c-be6a-351fb0f5fd28",
+      "notesInFlow": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "gVCc6F4GRlyO42Wy",
+          "name": "Telegram account 2"
+        }
+      },
+      "notes": "rate limit-too many requests error message"
+    },
+    {
+      "parameters": {
+        "chatId": "7639067062",
+        "text": "Something went wrong on my end — I've flagged it, please try again shortly.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        304
+      ],
+      "id": "05d87338-2961-4fd1-a69c-bf983f55c7d2",
+      "name": "other errors",
+      "webhookId": "5442c5e1-679b-45a5-89c5-60eb572811ee",
+      "credentials": {
+        "telegramApi": {
+          "id": "gVCc6F4GRlyO42Wy",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7639067062",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        -112
+      ],
+      "id": "8e704280-568c-4e65-a0a9-6b165c61919d",
+      "name": "respond to user",
+      "webhookId": "048ce369-4d98-4031-ad8b-6b5f7688ec50",
+      "credentials": {
+        "telegramApi": {
+          "id": "gVCc6F4GRlyO42Wy",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        -32
+      ],
+      "id": "5361f0da-5de4-4d19-8a6d-6f25dd9a9eb1",
+      "name": "user's query",
+      "webhookId": "9a77601f-e2d0-4b36-940f-3fd7fd43b34e",
+      "credentials": {
+        "telegramApi": {
+          "id": "gVCc6F4GRlyO42Wy",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are a supermarket inventory assistant for Telegram.\n\nTOOLS\n- Lookup tool: check stock, prices, categories.\n- Add/Update tool: add new items or update existing stock.\n\nCORE RULE\nBefore calling Add/Update, always use Lookup first to check if the item exists.\n\nNEW ITEMS\nIf the item doesn't exist: gather full details (category, quantity, unit, reorder threshold, price) before calling Add/Update. Combine product name and package size into the Item field (e.g. \"Beans 5kg\"). The Unit field is packaging type only (bags, crates, units) — never size or weight.\n\nEXISTING ITEMS — STOCK CHANGES\nRecognize these as stock-change requests, explicit or implied:\n- Add stock: \"add X\", \"I bought X\", \"I got X\", \"I received X\"\n- Subtract stock: \"remove X\", \"I used X\", \"I sold X\", \"X ran out\"\nCalculate the new total (current quantity ± amount) and state it to the user for confirmation before calling Add/Update. Keep category, unit, threshold, and price unchanged unless the user explicitly asks to change them. If subtracting would go below zero, flag this instead of proceeding.\n\nCONFIRMATION RULE\nNever call Add/Update without the user confirming the final numbers in their current message or your immediately preceding question. Never reuse quantity, price, or other details from an earlier, separate request — even for the same item — unless restated.\n\nEDGE CASES\n- \"Used/sold\" an item that doesn't exist: say you have no record of it, ask if they'd like to add it instead.\n- Quantity at or below reorder threshold: flag as low stock in your response.\n\nTONE\nKeep responses short and conversational, suitable for Telegram."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        80,
+        -48
+      ],
+      "id": "0874bd02-91e6-49a1-a05d-9860739461cb",
+      "name": "Inventory AI agent",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "",
+        "subject": "ERROR ALERT",
+        "message": "=Workflow: Inventory Assistant Error: {{ $json.error }} Time: {{ $now }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        -32
+      ],
+      "id": "bceabeec-0f70-47ca-8b8c-877916b850ce",
+      "name": "error message sent to ai engineer",
+      "webhookId": "62b9d9db-28b2-4ee3-afed-cae88025fd42",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ELqc97V3xKkIepIX",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Inventory AI agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Inventory AI agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Inventory AI agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Inventory AI agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Inventory AI agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "too many requests",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "other errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "user's query": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inventory AI agent": {
+      "main": [
+        [
+          {
+            "node": "respond to user",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "error message sent to ai engineer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "hkYLFIImcHML8AjR",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "1e20a412-13bf-4928-a760-89c93a0f8c65",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e87efae1c50ccaa3fe6b24c7b478b0c958003e76127c57c9b28fb1381f5f2812"
+  },
+  "id": "WzBlRX0HHKeKa8lI",
+  "tags": []
+}
